@@ -74,7 +74,7 @@ module Devise
           auth_key_value = (self.case_insensitive_keys || []).include?(auth_key) ? attributes[auth_key].downcase : attributes[auth_key]
 
           # resource = find_for_ldap_authentication(conditions)
-          resource = where(auth_key => auth_key_value).first
+          resource = first(auth_key => auth_key_value)
 
           if (resource.blank? and ::Devise.ldap_create_user)
             resource = new
@@ -83,7 +83,7 @@ module Devise
           end
 
           if resource.try(:valid_ldap_authentication?, attributes[:password])
-            if resource.new_record?
+            if resource.new?
               resource.ldap_before_save if resource.respond_to?(:ldap_before_save)
               resource.save
             end
